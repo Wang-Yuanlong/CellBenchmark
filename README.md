@@ -2,6 +2,8 @@
 
 > Jiayuan Chen, Yuanlong Wang, Xianhui Chen
 
+Repo for CSE5524 - Computer Vision in AU25 at Ohio State University
+
 ## Running Guide
 
 ### Prerequisites
