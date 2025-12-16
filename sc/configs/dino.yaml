@@ -1,0 +1,105 @@
+
+# Encoder configuration (MCViT)
+encoder_type: mcvit
+in_channels: 6                    # 6 channels for microscopy images
+hidden_size: 384                  # 384 for ViT-Small, 768 for ViT-Base
+num_hidden_layers: 12
+num_attention_heads: 6            # 6 for ViT-Small, 12 for ViT-Base
+image_size: 224                   # Global crop size
+patch_size: 16
+use_flash_attention: true
+use_instance_norm: true
+pretrained_vit: true             # Load ImageNet pretrained weights
+
+# DINO head configuration
+out_dim: 32768                 
+hidden_dim: 1024                  # Hidden dimension in projection head
+bottleneck_dim: 256               # Bottleneck dimension
+use_bn: false                     # Use BatchNorm in head (False in paper)
+norm_last_layer: true             # Normalize last layer weight_g
+
+# ============================================
+# DINO Hyperparameters
+# ============================================
+
+# Temperature
+teacher_temp: 0.04                # Initial teacher temperature
+teacher_temp_final: 0.07          # Final teacher temperature (after warmup)
+teacher_temp_warmup_epochs: 30    # Warmup epochs for teacher temperature
+student_temp: 0.1                 # Student temperature (fixed)
+
+# EMA momentum
+momentum_teacher: 0.996           # Base momentum for teacher EMA
+momentum_teacher_final: 1.0       # Final momentum (scheduled)
+center_momentum: 0.9              # Momentum for output centering
+
+# ============================================
+# Data Configuration
+# ============================================
+
+dataset: rxrx3
+csv_path: <path_to_rxrx3_full_metadata>
+img_folder: <path_to_rxrx3_images>
+train_split: train
+
+
+# Multi-crop configuration
+n_local_crops: 4                  # Number of local crops (8 in paper)
+local_crop_size: 96               # Size of local crops
+
+# ============================================
+# Training Configuration
+# ============================================
+
+output_dir: ../ckpt/dino_pretrain_p
+overwrite_output_dir: true
+
+# Training schedule
+num_train_epochs: 200
+max_steps: -1                     # -1 means use num_train_epochs
+
+# Batch size
+per_device_train_batch_size: 512   
+gradient_accumulation_steps: 1   
+
+# Optimization
+learning_rate: 0.0005            
+weight_decay: 0.04
+
+
+# Learning rate schedule
+lr_scheduler_type: cosine
+warmup_ratio: 0.1                 
+
+fp16: false                       # Use fp16 if GPU supports it
+bf16: true                        # Use bf16 for A100/H100
+logging_strategy: steps
+logging_steps: 50
+report_to: wandb                  # wandb, tensorboard, none
+
+save_strategy: epoch
+save_steps: 5000                  # Not used when save_strategy=epoch
+save_total_limit: 10               # Keep only last 10 checkpoints
+load_best_model_at_end: false
+
+evaluation_strategy: "no"         # "epoch" if you want to evaluate
+eval_steps: 1000
+
+
+dataloader_num_workers: 16
+dataloader_pin_memory: true
+dataloader_persistent_workers: true
+dataloader_drop_last: true        # Important for DINO
+
+
+# ============================================
+# Miscellaneous
+# ============================================
+
+seed: 42
+remove_unused_columns: false      # Keep all columns for SSL
+
+max_grad_norm: 1.0
+
+
+#    torchrun --nproc_per_node=4 dino_pretrain.py dino_config.yaml

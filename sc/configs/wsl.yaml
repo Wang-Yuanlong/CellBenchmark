@@ -1,0 +1,88 @@
+# Classification Training Configuration
+# Usage: python classification_train.py classification_config.yaml
+
+# ============================================
+# Model Architecture
+# ============================================
+
+# Encoder configuration (MCViT)
+encoder_type: mcvit
+in_channels: 6
+hidden_size: 384                  # 384 for ViT-S, 768 for ViT-B
+num_hidden_layers: 12
+num_attention_heads: 6            # 6 for ViT-S, 12 for ViT-B
+image_size: 224
+patch_size: 16
+use_flash_attention: true
+use_instance_norm: true
+
+# Classification head
+num_classes: 1000                 # Number of classes in your dataset
+dropout: 0.1
+
+
+pretrained_vit: true
+
+# ============================================
+# Data Configuration
+# ============================================
+
+dataset: rxrx3
+csv_path: <path_to_rxrx3_full_metadata>
+img_folder: <path_to_rxrx3_images>
+train_split: train
+
+
+
+# ============================================
+# Training Configuration
+# ============================================
+
+output_dir: ../ckpt/wsl_pretrained
+overwrite_output_dir: true
+
+# Training schedule
+num_train_epochs: 200
+max_steps: -1
+
+# Batch size
+per_device_train_batch_size: 512
+gradient_accumulation_steps: 1
+
+# Optimization
+learning_rate: 0.001           
+weight_decay: 0.05
+adam_beta1: 0.9
+adam_beta2: 0.999
+
+# Learning rate schedule
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+
+# Mixed precision
+fp16: false
+bf16: true
+
+
+
+save_strategy: epoch
+save_steps: 1000
+save_total_limit: 10
+
+
+
+logging_strategy: steps
+logging_steps: 50
+report_to: wandb
+
+
+dataloader_num_workers: 16
+dataloader_pin_memory: true
+dataloader_persistent_workers: true
+
+# ============================================
+# Miscellaneous
+# ============================================
+
+seed: 42
+remove_unused_columns: false

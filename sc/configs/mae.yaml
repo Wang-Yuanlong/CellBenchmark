@@ -1,0 +1,66 @@
+# MAE Pretraining Configuration Example
+# This YAML file can be used with HuggingFace's HfArgumentParser
+
+# Model Arguments
+encoder_type: "mcvit"  # or "cavit"
+in_channels: 6  # Number of input channels (e.g., 6 for RxRx3)
+hidden_size: 384  # 384 for ViT-Small, 768 for ViT-Base
+num_hidden_layers: 12
+num_attention_heads: 6  # 6 for ViT-Small, 12 for ViT-Base
+image_size: 224
+patch_size: 16
+use_flash_attention: true
+use_instance_norm: true
+
+# MAE-specific parameters
+mask_ratio: 0.75  # Mask 75% of patches (MAE default)
+decoder_embed_dim: 512  # Decoder embedding dimension
+decoder_depth: 8  # Number of decoder transformer blocks
+decoder_num_heads: 16  # Decoder attention heads
+norm_pix_loss: true  # Normalize pixels per-patch for loss
+
+# Optional: Load pretrained ViT weights (for MCViT only)
+pretrained_vit: false
+
+# Data Arguments
+dataset: rxrx3
+csv_path: <path_to_rxrx3_full_metadata>
+img_folder: <path_to_rxrx3_images>
+train_split: train
+
+# Training Arguments
+output_dir: ../ckpt/mae_cij
+overwrite_output_dir: true
+
+# Training schedule
+num_train_epochs: 200
+max_steps: -1                     # -1 means use num_train_epochs
+report_to: wandb                  # wandb, tensorboard, none
+
+per_device_train_batch_size: 512  
+
+# Optimizer
+learning_rate: 1.5e-4  
+weight_decay: 0.05
+adam_beta1: 0.9
+adam_beta2: 0.95
+warmup_ratio: 0.05  # 5% warmup
+
+# Learning rate schedule
+lr_scheduler_type: "cosine"
+
+# Logging and saving
+save_strategy: epoch
+logging_steps: 100
+save_steps: 5000
+save_total_limit: 10
+
+# Mixed precision
+fp16: false  # Use fp16 if available
+bf16: true  # Or use bf16 on Ampere+ GPUs
+
+
+# Other
+seed: 42
+dataloader_num_workers: 32
+remove_unused_columns: false

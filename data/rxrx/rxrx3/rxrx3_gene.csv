@@ -1,0 +1,2 @@
+well_id,experiment_name,plate,address,gene,treatment,SMILES,concentration,perturbation_type,cell_type
+gene-001_1_AA26,gene-001,1,AA26,CENPM,CENPM_guide_3,,,CRISPR,HUVEC
