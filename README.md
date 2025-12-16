@@ -59,3 +59,13 @@ python sc/eval/ggi.py \
 ```
 
 Here the `<method>` could be `dino`, `mae`, `simclr`, `wsl`, or `baseline`. The argument `model_path` only works when evaluating the `baseline` method.
+
+## Results
+
+### Initialization Ablation
+
+![image_init_ablation](assets/1.png)
+
+### Augmentation Comparison
+
+![image_aug_comparison](assets/2.png)
